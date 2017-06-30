@@ -1,0 +1,82 @@
+{
+  "variables": {
+    "region": "us-east-1",
+    "source_ami": "ami-d15a75c7",
+    "subnet_id": "subnet-df2fedf4",
+    "vpc_id": "vpc-a13ca6c4",
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "{{user `region`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "ssh_username": "ubuntu",
+      "ami_name": "fast-packer-node {{isotime \"2006-01-02T15:04:05Z\" | clean_ami_name}}",
+      "instance_type": "t2.medium",
+      "enhanced_networking": true,
+      "subnet_id": "{{user `subnet_id`}}",
+      "vpc_id": "{{user `vpc_id`}}",
+      "launch_block_device_mappings": [{
+        "delete_on_termination": true,
+        "device_name": "/dev/sda1",
+        "volume_size": 20,
+        "volume_type": "gp2"
+      }]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "./install_start.sh",
+      "execute_command": "{{ .Vars }} sudo -E -H bash '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "inline": ["mkdir ~/temp_dnn"]
+    },
+    {
+      "type": "file",
+      "source": "cudnn-8.0-linux-x64-v5.1.tgz",
+      "destination": "~/temp_dnn/cudnn-8.0-linux-x64-v5.1.tgz"
+    },
+    {
+      "type": "file",
+      "source": "bashconfig.sh",
+      "destination": "/etc/rc.local/bashconfig.sh"
+    },
+    {
+      "type": "file",
+      "source": "nvidiaoptimize.sh",
+      "destination": "/etc/rc.local/nvidiaoptimize.sh"
+    },
+    {
+      "type": "shell",
+      "script": "./install_python.sh",
+      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "./install_aws.sh",
+      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "./install_nvidia.sh",
+      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "./install_tensorflow.sh",
+      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "script": "./cleanup.sh",
+      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
+    }
+  ]
+}
