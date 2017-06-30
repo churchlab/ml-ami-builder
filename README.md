@@ -1,7 +1,7 @@
 These are scripts for configuring AWS GPU machines with CUDA. WIP
 
-## FAST implementation for `packer` and `ansible`
-`fast_packer.json` sets up an [Amazon EBS volume](https://www.packer.io/docs/builders/amazon-ebsvolume.html) on a `gp2` SSD drive using the Ubuntu 16.04 AMI `ami-d15a75c7`as a base.
+## GPU implementation for `packer`
+`gpu-packer.json` sets up an [Amazon EBS volume](https://www.packer.io/docs/builders/amazon-ebsvolume.html) on a `gp2` SSD drive using the Ubuntu 16.04 AMI `ami-d15a75c7`as a base.
 
 It installs:
 * Install Python 3 build dependencies, including `awscli`
