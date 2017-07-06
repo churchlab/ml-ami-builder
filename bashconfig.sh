@@ -1,5 +1,5 @@
 #!/bin/bash
-# write to /etc/rc.local/ to run at start up in Ubuntu 16.04
+# write to /usr/local/bin/ to run at start up in Ubuntu 16.04
 
 set -eux
 
