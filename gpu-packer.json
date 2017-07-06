@@ -46,12 +46,19 @@
     {
       "type": "file",
       "source": "bashconfig.sh",
-      "destination": "/etc/rc.local/bashconfig.sh"
+      "destination": "bashconfig.sh"
     },
     {
       "type": "file",
       "source": "nvidiaoptimize.sh",
-      "destination": "/etc/rc.local/nvidiaoptimize.sh"
+      "destination": "nvidiaoptimize.sh"
+    },
+    {
+      "inline": [
+        "sudo mv nvidiaoptimize.sh /etc/rc.local/nvidiaoptimize.sh",
+        "sudo mv bashconfig.sh /etc/rc.local/bashconfig.sh",
+      ],
+      "type": "shell"
     },
     {
       "type": "shell",
