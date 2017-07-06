@@ -1,6 +1,6 @@
 #!/bin/bash
 # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/accelerated-computing-instances.html#optimize_gpu
-# write to /etc/rc.local/ to run at start up in Ubuntu 16.04
+# write to /usr/local/bin/ to run at start up in Ubuntu 16.04
 
 set -eux
 

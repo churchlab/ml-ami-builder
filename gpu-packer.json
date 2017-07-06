@@ -35,15 +35,6 @@
       "execute_command": "{{ .Vars }} sudo -E -H bash '{{ .Path }}'"
     },
     {
-      "type": "shell",
-      "inline": ["mkdir ~/temp_dnn"]
-    },
-    {
-      "type": "file",
-      "source": "cudnn-8.0-linux-x64-v5.1.tgz",
-      "destination": "~/temp_dnn/cudnn-8.0-linux-x64-v5.1.tgz"
-    },
-    {
       "type": "file",
       "source": "bashconfig.sh",
       "destination": "bashconfig.sh"
@@ -54,11 +45,18 @@
       "destination": "nvidiaoptimize.sh"
     },
     {
-      "inline": [
-        "sudo mv nvidiaoptimize.sh /etc/rc.local/nvidiaoptimize.sh",
-        "sudo mv bashconfig.sh /etc/rc.local/bashconfig.sh",
-      ],
-      "type": "shell"
+      "type": "shell",
+      "script": "./install_boot.sh",
+      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
+    },
+    {
+      "type": "shell",
+      "inline": ["mkdir ~/temp_dnn"]
+    },
+    {
+      "type": "file",
+      "source": "cudnn-8.0-linux-x64-v5.1.tgz",
+      "destination": "~/temp_dnn/cudnn-8.0-linux-x64-v5.1.tgz"
     },
     {
       "type": "shell",
