@@ -44,8 +44,8 @@ apt-get install -y --no-install-recommends nvidia-${NVIDIA_DRIVER_MAJOR} nvidia-
 CUDA_FILE=cuda-repo-ubuntu1604_8.0.61-1_amd64.deb
 DEB_URL=http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/${CUDA_FILE}
 wget ${DEB_URL}
-sudo dpkg -i ${CUDA_FILE}
-sudo apt-get update
+dpkg -i ${CUDA_FILE}
+apt-get update
 apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers-generic dkms
 apt-get install -y  --no-install-recommends cuda-8-0
 
