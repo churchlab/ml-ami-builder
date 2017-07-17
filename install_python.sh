@@ -21,9 +21,12 @@ pip3 install virtualenv
 # apt-get install -y python3-venv
 pip3 install virtualenvwrapper
 mkdir vw_venvs
-echo "export WORKON_HOME=~/vw_venvs" >> ~/.bashrc
-echo "source /usr/local/bin/virtualenvwrapper.sh\n" >> ~/.bashrc
-source ~/.bashrc
+echo "export PATH=/usr/local/bin:$PATH" >> ~/.bash_profile
+echo "VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3" >> ~/.bash_profile
+echo "export WORKON_HOME=~/vw_venvs" >> ~/.bash_profile
+echo "export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv" >> ~/.bash_profile
+echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bash_profile
+source ~/.bash_profile
 
 # ******************************************************************************
 # 4 Get APT stuff and clean up
