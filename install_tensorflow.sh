@@ -12,6 +12,8 @@ export TF_BINARY_URL_GPU=https://storage.googleapis.com/tensorflow/linux/gpu/ten
 
 export TF_BINARY_URL=${TF_BINARY_URL_GPU}
 
+nvidia-docker run -it -p 8888:8888 gcr.io/tensorflow/tensorflow:latest-gpu
+
 # Python 3
 pip3 install  --ignore-installed --upgrade  ${TF_BINARY_URL}
 pip3 install ipython

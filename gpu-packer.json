@@ -15,7 +15,7 @@
       "region": "{{user `region`}}",
       "source_ami": "{{user `source_ami`}}",
       "ssh_username": "ubuntu",
-      "ami_name": "wyss-mlpe-gpu-{{isotime \"2006-01-02T15:04:05Z\" | clean_ami_name}}",
+      "ami_name": "wyss-mlpe-docker-gpu-{{isotime \"2006-01-02T15:04:05Z\" | clean_ami_name}}",
       "instance_type": "t2.medium",
       "enhanced_networking": true,
       "subnet_id": "{{user `subnet_id`}}",
@@ -51,15 +51,6 @@
     },
     {
       "type": "shell",
-      "inline": ["mkdir ~/temp_dnn"]
-    },
-    {
-      "type": "file",
-      "source": "cudnn-8.0-linux-x64-v5.1.tgz",
-      "destination": "~/temp_dnn/cudnn-8.0-linux-x64-v5.1.tgz"
-    },
-    {
-      "type": "shell",
       "script": "./install_python.sh",
       "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
     },
@@ -70,12 +61,12 @@
     },
     {
       "type": "shell",
-      "script": "./install_nvidia.sh",
+      "script": "./install_docker.sh",
       "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
     },
     {
       "type": "shell",
-      "script": "./install_tensorflow.sh",
+      "script": "./install_nvidia_docker.sh",
       "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
     },
     {
