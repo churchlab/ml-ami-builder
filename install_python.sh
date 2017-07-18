@@ -12,7 +12,7 @@ apt-get install -y build-essential libssl-dev libffi-dev python3-dev
 # ******************************************************************************
 # 2 install AWS CLI globally
 pip3 install --upgrade pip
-pip3 install -y awscli
+pip3 install awscli
 
 # ******************************************************************************
 # 3 Install virtual environment stuff, make a vitualenvwrapper home vw_venvs
