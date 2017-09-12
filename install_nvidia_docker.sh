@@ -16,10 +16,6 @@ apt-get install gnupg-curl
 # sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
 # sudo apt-get update && sudo apt-get install -y --no-install-recommends linux-headers-generic dkms cuda-drivers
 
-# export NVIDIA_DRIVER_MAJOR=375
-# apt-get update
-# apt-get install -y --no-install-recommends nvidia-${NVIDIA_DRIVER_MAJOR} nvidia-${NVIDIA_DRIVER_MAJOR}-dev
-
 # Network install
 # per https://github.com/NVIDIA/nvidia-docker/issues/258
 CUDA_FILE=cuda-repo-ubuntu1604_8.0.61-1_amd64.deb
@@ -42,8 +38,6 @@ apt-get install -y --no-install-recommends nvidia-modprobe
 
 # ******************************************************************************
 # 3. Install nvidia-docker and nvidia-docker-plugin
-# apt-get purge nvidia-docker
-# rm -rf /var/lib/nvidia-docker
 apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers-generic dkms
 wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
 dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
