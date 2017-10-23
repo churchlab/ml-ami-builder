@@ -1,4 +1,5 @@
 
+This file is for notes and links on setting up AMIs and `docker` images or `nvidia-docker` running for gpu usage
 
 # AWS basics links
 * [AWS Instance types](https://aws.amazon.com/ec2/instance-types/)
@@ -7,6 +8,7 @@
 * [Ubuntu 16.04 x84_64 debian packages](https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/)
 * [cuda public repo source page](https://hub.docker.com/r/nvidia/cuda/)
 * [gitlab sub link](https://gitlab.com/nvidia/cuda/tree/ubuntu16.04)
+* more of this gitlab [example Dockerfile](https://gitlab.com/nvidia/cuda/blob/ubuntu16.04/8.0/runtime/Dockerfile)
 * [Linux Cuda install](http://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#pre-installation-actions)
 
 # Canonical Ubuntu repo for nvidia
