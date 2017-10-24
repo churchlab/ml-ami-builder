@@ -24,8 +24,12 @@ This file is for notes and links on setting up AMIs and `docker` images or `nvid
 
 # Deploy AWS HPC cluster
 * [using CfnCluster intro](https://aws.amazon.com/getting-started/projects/deploy-elastic-hpc-cluster/)
-* [Glebs design document](https://docs.google.com/document/d/1rYe7wV6BuSXkEGvFz3HR3pmnyqigtggKWOFOmrUJWeQ/edit#heading=h.sdndlra6bpj4)
 * [CfnCluster supported base AMIs](https://github.com/awslabs/cfncluster/blob/master/amis.txt)
 * [CfnCluster network configurations](http://cfncluster.readthedocs.io/en/latest/networking.html)
 * [CfnCluster config files](http://cfncluster.readthedocs.io/en/latest/configuration.html)
 * [ipython cluster example](https://github.com/roryk/ipython-cluster-helper/blob/master/example/example.py)
+
+# Design Docs
+
+* [Hyperborg](https://docs.google.com/document/d/1zPcUgOoeaS1BUCxGOfvcviO9XoEr_nMVdR03WqQ9K8g/edit#)
+* [Use case: Sampling Sequences](https://docs.google.com/document/d/1rYe7wV6BuSXkEGvFz3HR3pmnyqigtggKWOFOmrUJWeQ/edit#heading=h.sdndlra6bpj4)
