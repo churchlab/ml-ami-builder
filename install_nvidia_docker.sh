@@ -12,35 +12,60 @@ apt-get install gnupg-curl
 
 # ******************************************************************************
 # 1. Install official NVIDIA driver package
-# sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
-# sudo sh -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
-# sudo apt-get update && sudo apt-get install -y --no-install-recommends linux-headers-generic dkms cuda-drivers
-
 # Network install
 # per https://github.com/NVIDIA/nvidia-docker/issues/258
-CUDA_FILE=cuda-repo-ubuntu1604_8.0.61-1_amd64.deb
+
+# TEST DEPRECATION THIS BLOCK 2017.12.11
+# CUDA_FILE=cuda-repo-ubuntu1604_8.0.61-1_amd64.deb
+
+# UPGRADE TEST TO CUDA 9 ADDED 2017.12.11
+# tensorflow is using nvidia/cuda:9.0-cudnn7-runtime-ubuntu16.04
+# from https://hub.docker.com/r/nvidia/cuda/
+# it uses driver 9.0.176 from https://gitlab.com/nvidia/cuda/blob/ubuntu16.04/9.0/base/Dockerfile
+CUDA_FILE=cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
+
 DEB_URL=https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/${CUDA_FILE}
 wget ${DEB_URL}
 dpkg -i ${CUDA_FILE}
 apt-get update
 apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers-generic dkms
-apt-get install -y  --no-install-recommends cuda-drivers
 
-# # symbolic link fix for bug
-# mv /usr/lib/nvidia-375/libEGL.so.1 /usr/lib/nvidia-375/libEGL.so.1.orig
-# ln -s  /usr/lib/nvidia-375/libEGL.so.1.orig /usr/lib/nvidia-375/libEGL.so.1
-# mv /usr/lib32/nvidia-375/libEGL.so.1 /usr/lib/nvidia-375/libEGL.so.1.orig
-# ln -s  /usr/lib32/nvidia-375/libEGL.so.1.orig /usr/lib32/nvidia-375/libEGL.so.1
+CUDA_DRIVERS_FILE=cuda-drivers_384.81-1_amd64.deb
+CUDA_DRIVERS_FILE_URL=https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/${CUDA_DRIVERS_FILE}
+# could also install specific deb cuda-drivers_384.81-1_amd64.deb 4.0KB 2017-09-22 22:08
+wget ${CUDA_DRIVERS_FILE_URL}
+dpkg -i ${CUDA_DRIVERS_FILE}
+apt-get update
+
+# TEST DEPRECATION THIS BLOCK 2017.12.11
+# apt-get install -y  --no-install-recommends cuda-drivers
 
 # ******************************************************************************
 # 2. NVIDIA modprobe is installed
 apt-get install -y --no-install-recommends nvidia-modprobe
 
-# ******************************************************************************
-# 3. Install nvidia-docker and nvidia-docker-plugin
+# TEST DEPRECATION THIS BLOCK 2017.12.11
+# # ******************************************************************************
+# # 3. Install nvidia-docker and nvidia-docker-plugin
 apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers-generic dkms
 wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
 dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
+
+
+# ******************************************************************************
+# 3. Install nvidia-docker and nvidia-docker-plugin
+# from nvidia for Xenial 16.04 https://nvidia.github.io/nvidia-docker/
+
+# UNCOMMENT THIS BLOCK WHEN WE ARE READY FOR nvidia-docker2 (that is version 2)
+# This is now nvidia-docker version 2 2017.12.11
+# curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+#   sudo apt-key add -
+# curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | \
+#   sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+# sudo apt-get update
+
+# sudo apt-get install nvidia-docker2
+# sudo pkill -SIGHUP dockerd
 
 # ******************************************************************************
 # 4. Fix busted permissions in nvidia-docker as in here:
