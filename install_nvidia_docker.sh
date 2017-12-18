@@ -26,19 +26,13 @@ CUDA_FILE=cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
 
 DEB_URL=https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/${CUDA_FILE}
 wget ${DEB_URL}
+apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
 dpkg -i ${CUDA_FILE}
 apt-get update
 apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers-generic dkms
 
-CUDA_DRIVERS_FILE=cuda-drivers_384.81-1_amd64.deb
-CUDA_DRIVERS_FILE_URL=https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/${CUDA_DRIVERS_FILE}
-# could also install specific deb cuda-drivers_384.81-1_amd64.deb 4.0KB 2017-09-22 22:08
-wget ${CUDA_DRIVERS_FILE_URL}
-dpkg -i ${CUDA_DRIVERS_FILE}
-apt-get update
-
-# TEST DEPRECATION THIS BLOCK 2017.12.11
-# apt-get install -y  --no-install-recommends cuda-drivers
+# This installs nvidia_387 2017.12.18 NC
+apt-get install -y  --no-install-recommends cuda-drivers
 
 # ******************************************************************************
 # 2. NVIDIA modprobe is installed
