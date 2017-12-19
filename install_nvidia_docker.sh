@@ -55,7 +55,14 @@ apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers
 # instantiated in ami-64ec901e
 apt-get install -y  --no-install-recommends cuda-drivers=384.81-1
 
+# COMMENTED OUT 2017.12.19.  FOR DOING RUN FILES INSTALLATION
 # wget https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.1.85_387.26_linux
+
+# COMMENTED OUT 2017.12.19.  FOR UPDATING PATH, USE `9.1` instead of `9.0` for `9.1`
+# echo "export PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}}"  >> ~/.bash_profile
+# echo "export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64\
+#                          ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"  >> ~/.bash_profile
+# source ~/.bash_profile
 
 # ******************************************************************************
 # 2. NVIDIA modprobe is installed
@@ -67,7 +74,6 @@ apt-get install -y --no-install-recommends nvidia-modprobe
 apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers-generic dkms
 wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
 dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
-
 
 # ******************************************************************************
 # 3. Install nvidia-docker and nvidia-docker-plugin
