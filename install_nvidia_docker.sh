@@ -1,10 +1,22 @@
 #!/bin/bash
 
+# NOTE 1
 # test with:
 #       nvidia-docker run --rm nvidia/cuda nvidia-smi
 # see: https://github.com/NVIDIA/nvidia-docker/wiki and
 #  https://github.com/NVIDIA/nvidia-docker/wiki/Deploy-on-Amazon-EC2
 # for details
+
+# NOTE 2
+# dockerfiles for tensorflow are at:
+# https://hub.docker.com/r/tensorflow/tensorflow/tags/
+# this is tested with
+#   FROM gcr.io/tensorflow/tensorflow:1.4.1-gpu-py3
+
+# NOTE 3
+# drivers shown at:
+# http://www.nvidia.com/download/driverResults.aspx/124729/en-us
+# will likely work on all AWS instance types (p2, g3, p3) with all counts of GPUs
 
 # ******************************************************************************
 # 0. Add support for getting keys over SSL as in part 2.
@@ -15,14 +27,14 @@ apt-get install gnupg-curl
 # Network install
 # per https://github.com/NVIDIA/nvidia-docker/issues/258
 
-# TEST DEPRECATION THIS BLOCK 2017.12.11
-# CUDA_FILE=cuda-repo-ubuntu1604_8.0.61-1_amd64.deb
-
 # UPGRADE TEST TO CUDA 9 ADDED 2017.12.11
 # tensorflow is using nvidia/cuda:9.0-cudnn7-runtime-ubuntu16.04
 # from https://hub.docker.com/r/nvidia/cuda/
 # it uses driver 9.0.176 from https://gitlab.com/nvidia/cuda/blob/ubuntu16.04/9.0/base/Dockerfile
-CUDA_FILE=cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
+
+# This works for p2.8xlarge and p3.2xlarge but not p3.8xlarge
+# CUDA_FILE=cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
+CUDA_FILE=cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
 
 DEB_URL=https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/${CUDA_FILE}
 wget ${DEB_URL}
@@ -31,8 +43,19 @@ dpkg -i ${CUDA_FILE}
 apt-get update
 apt-get install -y --no-install-recommends --allow-unauthenticated linux-headers-generic dkms
 
-# This installs nvidia_387 2017.12.18 NC
-apt-get install -y  --no-install-recommends cuda-drivers
+# NOTE 4
+# USE apt-cache showpkg <package name> to determine available versions in te deb above
+
+# NC COMMENTED OUT 2017.12.18
+# running CUDA 9.1 with 387.26-1 works on p2.8xlarge but not p3.8xlarge
+# instantiated in ami-c30d71b9
+# apt-get install -y  --no-install-recommends cuda-drivers=387.26-1
+
+# running CUDA 9.0 with 384.81-1 works on p3.8xlarge and everthing
+# instantiated in ami-64ec901e
+apt-get install -y  --no-install-recommends cuda-drivers=384.81-1
+
+# wget https://developer.nvidia.com/compute/cuda/9.1/Prod/local_installers/cuda_9.1.85_387.26_linux
 
 # ******************************************************************************
 # 2. NVIDIA modprobe is installed
