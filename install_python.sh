@@ -26,6 +26,11 @@ echo "VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3" >> ~/.bash_profile
 echo "export WORKON_HOME=~/vw_venvs" >> ~/.bash_profile
 echo "export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv" >> ~/.bash_profile
 echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bash_profile
+
+echo "export PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}}"
+echo "export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64\
+                         ${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+
 source ~/.bash_profile
 
 # ******************************************************************************
