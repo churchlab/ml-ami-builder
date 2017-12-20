@@ -19,10 +19,29 @@ from fabric.contrib import files
 
 
 INSTANCE_TYPES_TO_TEST = {
+    ### cpu-only
+
+    'c5.xlarge': {
+        'is_gpu': False
+    },
+
     'm4.2xlarge': {
         'is_gpu': False
     },
+
+    ### GPUs
+
+    # older
+    'g3.4xlarge': {
+        'is_gpu': True
+    },
+
+    # latest
     'p3.2xlarge': {
+        'is_gpu': True
+    },
+
+    'p3.8xlarge': {
         'is_gpu': True
     },
 }
