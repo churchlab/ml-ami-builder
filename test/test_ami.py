@@ -66,7 +66,7 @@ def create_instance(ami_id, instance_type):
         KeyName='mlpe-common',
         MinCount=1,
         MaxCount=1,
-        SubnetId='subnet-7c882925',
+        SubnetId='subnet-7c882925',  # default vpc + us-east-1c
     )
 
     # Grab handle to created instance.
