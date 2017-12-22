@@ -50,7 +50,7 @@ AUTO_RESPONSE_PROMPTS_DICT = {
     'Are you sure you want to continue connecting (yes/no)? ': 'yes'
 }
 
-ec2_connection = boto3.resource('ec2')
+TEST_DOCKER_IMAGE_NAME = 'mlpe-gfp-pilot-test-docker-image'
 
 
 def create_instance(ami_id, instance_type):
@@ -58,6 +58,7 @@ def create_instance(ami_id, instance_type):
 
     Uses boto3.
     """
+    ec2_connection = boto3.resource('ec2')
     ec2_client = boto3.client('ec2')
 
     created_instances = ec2_connection.create_instances(
@@ -67,6 +68,17 @@ def create_instance(ami_id, instance_type):
         MinCount=1,
         MaxCount=1,
         SubnetId='subnet-7c882925',  # default vpc + us-east-1c
+        TagSpecifications=[
+            {
+                'ResourceType': 'instance',
+                'Tags': [
+                    {
+                        'Key': 'Name',
+                        'Value': 'testing-gpu-packer'
+                    }
+                ],
+            },
+        ]
     )
 
     # Grab handle to created instance.
@@ -105,14 +117,40 @@ def test_tensorflow(instance_host, is_gpu=True):
             with settings(prompts=AUTO_RESPONSE_PROMPTS_DICT):
                 run('git clone git@github.com:churchlab/mlpe-gfp-pilot.git')
 
-    # Build and run docker.
+    # Here we build the docker image and run the test script.
+    # The build and run depends on whether we're GPU-enabled or not.
+
+    if is_gpu:
+        docker_bin = 'nvidia-docker'
+        docker_file = 'docker/Dockerfile.gpu'
+        test_script = 'test_gpu.py'
+    else:
+        docker_bin = 'docker'
+        docker_file = 'docker/Dockerfile'
+        test_script = 'test_cpu.py'
+
     with cd('/home/ubuntu/notebooks/mlpe-gfp-pilot'):
-        if is_gpu:
-            run('docker build -f docker/Dockerfile.gpu.test -t mlpe-gfp-pilot-gpu-test .')
-            run('nvidia-docker run -it -v ~/notebooks:/notebooks mlpe-gfp-pilot-gpu-test')
-        else:
-            run('docker build -f docker/Dockerfile.cpu.test -t mlpe-gfp-pilot-cpu-test .')
-            run('docker run -it -v ~/notebooks:/notebooks mlpe-gfp-pilot-cpu-test')
+        # The test scripts create this file.
+        # Make sure it doesn't exist before we start.
+        if files.exists('src/python/scripts/TEST_SUCCESS'):
+            run('rm src/python/scripts/TEST_SUCCESS')
+        assert not files.exists('src/python/scripts/TEST_SUCCESS')
+
+        # Build the docker
+        run('docker build -f {docker_file} -t {docker_image} .'.format(
+                docker_file=docker_file,
+                docker_image=TEST_DOCKER_IMAGE_NAME))
+        run(
+                '{docker_bin} run -it -v ~/notebooks:/notebooks '
+                '--workdir /notebooks/mlpe-gfp-pilot/src/python/scripts '
+                '--entrypoint python '
+                '{docker_image_name} '
+                '{test_script}'.format(
+                        docker_bin=docker_bin,
+                        docker_image_name=TEST_DOCKER_IMAGE_NAME,
+                        test_script=test_script))
+
+        # This file gets created by the script.
         assert files.exists('src/python/scripts/TEST_SUCCESS')
 
 
@@ -120,6 +158,8 @@ if __name__ == '__main__':
 
     # TODO: Put this under commandline args.
     ami_to_test = 'ami-91146aeb'
+
+    ec2_connection = boto3.resource('ec2')
 
     for instance_type, instance_properties in INSTANCE_TYPES_TO_TEST.items():
         print('Testing {ami} with instance type {it}'.format(
@@ -131,11 +171,17 @@ if __name__ == '__main__':
         test_instance = list(ec2_connection.instances.filter(
                 InstanceIds=[test_instance.id]))[0]
 
+        # DEBUG:
+        # test_instance = list(ec2_connection.instances.filter(
+        #         InstanceIds=['i-0f9a0f463128c0f5f']))[0]
+
         print('Testing TensorFlow ...')
         test_tensorflow(
                 test_instance.public_dns_name,
                 is_gpu=instance_properties['is_gpu'])
-        print('...Success. Terminating')
+        print('...Success.')
+
+        print('Terminating.')
         test_instance.terminate()
 
         print('Testing {ami} with instance type {it} succeeded.'.format(
