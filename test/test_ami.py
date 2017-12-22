@@ -10,6 +10,8 @@ See Fabric docs here:
 http://docs.fabfile.org/en/1.12.1/index.html#usage-docs
 """
 
+from multiprocessing import Process
+
 import boto3
 from fabric.api import cd
 from fabric.api import env
@@ -154,39 +156,55 @@ def test_tensorflow(instance_host, is_gpu=True):
         assert files.exists('src/python/scripts/TEST_SUCCESS')
 
 
+def test_ami_with_instance(ami_to_test, instance_type, instance_properties):
+    """Builds and test AMI for the instance type.
+    """
+    ec2_connection = boto3.resource('ec2')
+
+    print('Testing {ami} with instance type {it}'.format(
+            ami=ami_to_test, it=instance_type))
+    print('Creating instance ...')
+    test_instance = create_instance(ami_to_test, instance_type)
+
+    # Refresh the instance handle so that the public dns is available.
+    test_instance = list(ec2_connection.instances.filter(
+            InstanceIds=[test_instance.id]))[0]
+
+    # DEBUG:
+    # test_instance = list(ec2_connection.instances.filter(
+    #         InstanceIds=['i-0f9a0f463128c0f5f']))[0]
+
+    print('Testing TensorFlow ...')
+    test_tensorflow(
+            test_instance.public_dns_name,
+            is_gpu=instance_properties['is_gpu'])
+    print('...Success.')
+
+    print('Terminating.')
+    test_instance.terminate()
+
+    print('Testing {ami} with instance type {it} succeeded.'.format(
+            ami=ami_to_test, it=instance_type))
+
+
 if __name__ == '__main__':
 
     # TODO: Put this under commandline args.
     ami_to_test = 'ami-91146aeb'
 
-    ec2_connection = boto3.resource('ec2')
-
+    test_process_list = []
     for instance_type, instance_properties in INSTANCE_TYPES_TO_TEST.items():
-        print('Testing {ami} with instance type {it}'.format(
-                ami=ami_to_test, it=instance_type))
-        print('Creating instance ...')
-        test_instance = create_instance(ami_to_test, instance_type)
+        test_process_list.append(
+                Process(target=test_ami_with_instance,
+                        args=(ami_to_test, instance_type, instance_properties)))
 
-        # Refresh the instance handle so that the public dns is available.
-        test_instance = list(ec2_connection.instances.filter(
-                InstanceIds=[test_instance.id]))[0]
+    # Start all processes.
+    for p in test_process_list:
+        p.start()
 
-        # DEBUG:
-        # test_instance = list(ec2_connection.instances.filter(
-        #         InstanceIds=['i-0f9a0f463128c0f5f']))[0]
-
-        print('Testing TensorFlow ...')
-        test_tensorflow(
-                test_instance.public_dns_name,
-                is_gpu=instance_properties['is_gpu'])
-        print('...Success.')
-
-        print('Terminating.')
-        test_instance.terminate()
-
-        print('Testing {ami} with instance type {it} succeeded.'.format(
-                ami=ami_to_test, it=instance_type))
-
+    # Block until all done.
+    for p in test_process_list:
+        p.join()
 
     print('Successfully tested {ami} with instance types {it_list}'.format(
             ami=ami_to_test,
