@@ -34,11 +34,11 @@ repositories `test/` path
 
 1. Validate the template.
 
-    $ packer validate gpu-packer.json
+        $ packer validate gpu-packer.json
 
 2. Build. You'll need your AWS keys.
 
-    $ packer build \
-        -var 'aws_access_key=YOUR ACCESS KEY' \
-        -var 'aws_secret_key=YOUR SECRET KEY' \
-        gpu-packer.json
+        $ packer build \
+            -var 'aws_access_key=YOUR ACCESS KEY' \
+            -var 'aws_secret_key=YOUR SECRET KEY' \
+            gpu-packer.json

@@ -183,14 +183,22 @@ def test_ami_with_instance(ami_to_test, instance_type, instance_properties):
     print('Terminating.')
     test_instance.terminate()
 
-    print('Testing {ami} with instance type {it} succeeded.'.format(
-            ami=ami_to_test, it=instance_type))
+    print('Testing {ami_id} with instance type {it} succeeded.'.format(
+            ami_id=ami_to_test, it=instance_type))
 
 
 if __name__ == '__main__':
-
-    # TODO: Put this under commandline args.
-    ami_to_test = 'ami-91146aeb'
+    import sys
+    if len(sys.argv) == 2:
+        # ami_to_test = 'ami-91146aeb'
+        ami_to_test = sys.argv[1]
+        print("Running test on {ami_id}".format(ami_id=ami_to_test))
+    elif len(sys.argv) > 2:
+        print("Too many arguments {}, use only one".format(len(sys.arv) - 1))
+        sys.exit(1)
+    else:
+        print("No ami id provided")
+        sys.exit(1)
 
     test_process_list = []
     for instance_type, instance_properties in INSTANCE_TYPES_TO_TEST.items():
@@ -206,6 +214,6 @@ if __name__ == '__main__':
     for p in test_process_list:
         p.join()
 
-    print('Successfully tested {ami} with instance types {it_list}'.format(
-            ami=ami_to_test,
+    print('Successfully tested {ami_id} with instance types {it_list}'.format(
+            ami_id=ami_to_test,
             it_list=INSTANCE_TYPES_TO_TEST.keys()))
