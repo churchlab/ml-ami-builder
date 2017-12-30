@@ -25,7 +25,7 @@ All bash scripts in repo are and should remain well commented to document the bu
 ## Requirements:
 
 * Download packer <https://www.packer.io/downloads.html> and unzip.
-Optionally: move the binary into `/usr/local/bin`.
+Optional: move the binary into `/usr/local/bin`.
 
 * install python3 libraries in `requirements.txt` to run tests in the
 repositories `test/` path
