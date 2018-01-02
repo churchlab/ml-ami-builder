@@ -10,7 +10,7 @@ See Fabric docs here:
 http://docs.fabfile.org/en/1.12.1/index.html#usage-docs
 """
 
-from multiprocessing import Process
+import multiprocessing
 
 import boto3
 from fabric.api import cd
@@ -104,6 +104,8 @@ def test_tensorflow(instance_host, is_gpu=True):
     This is the primary test that confirms installation worked.
 
     Uses Fabric.
+
+    Returns boolean indicating whether test passed.
     """
     # Fab config.
     env.user = 'ubuntu'
@@ -153,11 +155,13 @@ def test_tensorflow(instance_host, is_gpu=True):
                         test_script=test_script))
 
         # This file gets created by the script.
-        assert files.exists('src/python/scripts/TEST_SUCCESS')
+        return files.exists('src/python/scripts/TEST_SUCCESS')
 
 
 def test_ami_with_instance(ami_to_test, instance_type, instance_properties):
     """Builds and test AMI for the instance type.
+
+    Returns boolean indicating whether test passed.
     """
     ec2_connection = boto3.resource('ec2')
 
@@ -170,12 +174,8 @@ def test_ami_with_instance(ami_to_test, instance_type, instance_properties):
     test_instance = list(ec2_connection.instances.filter(
             InstanceIds=[test_instance.id]))[0]
 
-    # DEBUG:
-    # test_instance = list(ec2_connection.instances.filter(
-    #         InstanceIds=['i-0f9a0f463128c0f5f']))[0]
-
     print('Testing TensorFlow ...')
-    test_tensorflow(
+    did_test_succeed = test_tensorflow(
             test_instance.public_dns_name,
             is_gpu=instance_properties['is_gpu'])
     print('...Success.')
@@ -183,29 +183,37 @@ def test_ami_with_instance(ami_to_test, instance_type, instance_properties):
     print('Terminating.')
     test_instance.terminate()
 
-    print('Testing {ami} with instance type {it} succeeded.'.format(
-            ami=ami_to_test, it=instance_type))
+    print('Testing {ami_id} with instance type {it} succeeded.'.format(
+            ami_id=ami_to_test, it=instance_type))
+
+    return did_test_succeed
 
 
 if __name__ == '__main__':
+    import sys
+    if len(sys.argv) == 2:
+        ami_to_test = sys.argv[1]
+        print("Running test on {ami_id}".format(ami_id=ami_to_test))
+    elif len(sys.argv) > 2:
+        print("Too many arguments {}, use only one".format(len(sys.arv) - 1))
+        sys.exit(1)
+    else:
+        print("No ami id provided")
+        sys.exit(1)
 
-    # TODO: Put this under commandline args.
-    ami_to_test = 'ami-91146aeb'
-
-    test_process_list = []
+    # Start test jobs for each intance type in parallel.
+    pool = multiprocessing.Pool(processes=len(INSTANCE_TYPES_TO_TEST))
+    async_result_list = []
     for instance_type, instance_properties in INSTANCE_TYPES_TO_TEST.items():
-        test_process_list.append(
-                Process(target=test_ami_with_instance,
-                        args=(ami_to_test, instance_type, instance_properties)))
+        async_result_list.append(pool.apply_async(
+                test_ami_with_instance,
+                args=(ami_to_test, instance_type, instance_properties)))
 
-    # Start all processes.
-    for p in test_process_list:
-        p.start()
+    # Block thread until all results complete.
+    result_list = [p.get() for p in async_result_list]
 
-    # Block until all done.
-    for p in test_process_list:
-        p.join()
-
-    print('Successfully tested {ami} with instance types {it_list}'.format(
-            ami=ami_to_test,
-            it_list=INSTANCE_TYPES_TO_TEST.keys()))
+    # Print results.
+    print('Results for tsting {ami_id}:'.format(ami_id=ami_to_test))
+    for i, instance_type in enumerate(INSTANCE_TYPES_TO_TEST.keys()):
+        result = 'PASS' if result_list[i] else 'FAIL'
+        print(instance_type, result)
