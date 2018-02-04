@@ -1,16 +1,26 @@
 # Packer and related scripts for configuring AWS GPU machines with CUDA Drivers
 
+## Latest ami
+
+**ami-ba9b98c0** (wyss-mlpe-docker-gpu-2018-02-03T21-11-33Z)
+
+    Results for tsting ami-ba9b98c0:
+    c5.xlarge PASS
+    m4.2xlarge PASS
+    g3.4xlarge PASS
+    p3.2xlarge PASS
+    p3.8xlarge PASS
+
 ## Overview
 
 Use [packer](https://www.packer.io) to create an AMI to run `nvidia-docker` containers like `tensorflow:1.4.1-gpu-py3`
 
 The `packer` config `gpu-packer.json` creates an AMI backed by an [Amazon EBS volume](https://www.packer.io/docs/builders/amazon-ebsvolume.html) on a `gp2` SSD drive using the Ubuntu 16.04 AMI `ami-d15a75c7`as a base.
 
-The config then tells packer to setup the following (2017.12.30):
+The config then tells packer to setup the following (2018.02.03):
 
-* Install NVIDIA cuda drivers for `cuda-repo-ubuntu1604_9.1.85`
-* Install `nvidia-docker` v1.0.1
-* Sets up nouveua video driver block to not interfere with NVIDIA proprietary drivers
+* Install Nvidia drivers 384.111 - These are the latest recommended for Tesla (AWS p2, g3, p3)
+* Install `nvidia-docker` v2
 * `systemd` service 00: optimizes driver settings for in:
     * g3 M60
     * p3 V100
