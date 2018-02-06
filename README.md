@@ -4,7 +4,7 @@
 
 **ami-ba9b98c0** (wyss-mlpe-docker-gpu-2018-02-03T21-11-33Z)
 
-    Results for tsting ami-ba9b98c0:
+    Results for testing ami-ba9b98c0:
     c5.xlarge PASS
     m4.2xlarge PASS
     g3.4xlarge PASS

@@ -213,7 +213,7 @@ if __name__ == '__main__':
     result_list = [p.get() for p in async_result_list]
 
     # Print results.
-    print('Results for tsting {ami_id}:'.format(ami_id=ami_to_test))
+    print('Results for testing {ami_id}:'.format(ami_id=ami_to_test))
     for i, instance_type in enumerate(INSTANCE_TYPES_TO_TEST.keys()):
         result = 'PASS' if result_list[i] else 'FAIL'
         print(instance_type, result)
