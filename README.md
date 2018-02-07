@@ -1,4 +1,6 @@
-# Packer and related scripts for configuring AWS GPU machines with CUDA Drivers
+# ml-ami-builder
+
+Packer and related scripts for configuring AWS GPU machines with nvidia driver and docker. Users of the AMI should then use the nvidia or Tensorflow docker files which handle installing CUDA, etc.
 
 ## Latest ami
 
