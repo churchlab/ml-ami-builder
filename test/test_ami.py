@@ -134,6 +134,9 @@ def test_tensorflow(instance_host, is_gpu=True):
         test_script = 'test_cpu.py'
 
     with cd('/home/ubuntu/notebooks/mlpe-gfp-pilot'):
+        # Update submodules. Required for mlpe lib dep.
+        run('git submodule update --init --recursive')
+
         # The test scripts create this file.
         # Make sure it doesn't exist before we start.
         if files.exists('src/python/scripts/TEST_SUCCESS'):
@@ -141,9 +144,16 @@ def test_tensorflow(instance_host, is_gpu=True):
         assert not files.exists('src/python/scripts/TEST_SUCCESS')
 
         # Build the docker
-        run('docker build -f {docker_file} -t {docker_image} .'.format(
-                docker_file=docker_file,
-                docker_image=TEST_DOCKER_IMAGE_NAME))
+        run(
+                'docker build '
+                '-f {docker_file} '
+                '-t {docker_image} '
+                '--build-arg PIP_INSTALL_MLPE_AT_BUILD=1 '
+                '.'.format(
+                        docker_file=docker_file,
+                        docker_image=TEST_DOCKER_IMAGE_NAME))
+
+        # Run it, calling the script.
         run(
                 '{docker_bin} run -it -v ~/notebooks:/notebooks '
                 '--workdir /notebooks/mlpe-gfp-pilot/src/python/scripts '
