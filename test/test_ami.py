@@ -19,7 +19,6 @@ from fabric.api import run
 from fabric.api import settings
 from fabric.contrib import files
 
-
 INSTANCE_TYPES_TO_TEST = {
     ### cpu-only
 
@@ -198,6 +197,11 @@ def test_ami_with_instance(ami_to_test, instance_type, instance_properties):
 
     return did_test_succeed
 
+is_done = 0
+def testCount(x=False):
+    global is_done
+    is_done += 1
+    print("\t>> Finished {}, {}".format(is_done, x))
 
 if __name__ == '__main__':
     import sys
@@ -212,12 +216,13 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Start test jobs for each intance type in parallel.
-    pool = multiprocessing.Pool(processes=len(INSTANCE_TYPES_TO_TEST))
+    pool = multiprocessing.Pool(processes=len(INSTANCE_TYPES_TO_TEST)+1)
     async_result_list = []
     for instance_type, instance_properties in INSTANCE_TYPES_TO_TEST.items():
         async_result_list.append(pool.apply_async(
                 test_ami_with_instance,
-                args=(ami_to_test, instance_type, instance_properties)))
+                args=(ami_to_test, instance_type, instance_properties),
+                callback=testCount) )
 
     # Block thread until all results complete.
     result_list = [p.get() for p in async_result_list]

@@ -4,9 +4,9 @@ Packer and related scripts for configuring AWS GPU machines with nvidia driver a
 
 ## Latest ami
 
-**ami-ba9b98c0** (wyss-mlpe-docker-gpu-2018-02-03T21-11-33Z)
+**ami-ef7b9a92** (wyss-mlpe-docker-gpu-2018-02-21T21-06-10Z)
 
-    Results for testing ami-ba9b98c0:
+    Results for testing ami-ef7b9a92:
     c5.xlarge PASS
     m4.2xlarge PASS
     g3.4xlarge PASS

@@ -78,7 +78,8 @@
     {
       "type": "shell",
       "script": "./cleanup.sh",
-      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'"
+      "execute_command": "{{ .Vars }} sudo -E bash '{{ .Path }}'",
+      "pause_before": "3s"
     }
   ]
 }
