@@ -55,6 +55,8 @@ repositories `test/` path
             -var 'aws_secret_key=YOUR SECRET KEY' \
             gpu-packer.json
 
-## Support
+## Acknowledgements
 
 Development is generously supported by [AWS Cloud Credits for Research](https://aws.amazon.com/research-credits/).
+
+Thank you to [4Catalyzer](https://github.com/4Catalyzer) for sharing early versions of these scripts.
