@@ -42,9 +42,11 @@ INSTANCE_TYPES_TO_TEST = {
         'is_gpu': True
     },
 
-    'p3.8xlarge': {
-        'is_gpu': True
-    },
+    # Uncomment to test explicitly. This is an expensive machine so make
+    # sure it doesn't get stuck on!
+    # 'p3.8xlarge': {
+    #     'is_gpu': True
+    # },
 }
 
 AUTO_RESPONSE_PROMPTS_DICT = {
